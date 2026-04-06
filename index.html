@@ -8,26 +8,30 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0c0e14;
-    --surface: #14171f;
-    --surface2: #1c2029;
-    --surface3: #242833;
-    --border: #2a2e3a;
-    --text: #eaecf2;
-    --text-secondary: #a0a5b8;
-    --text-muted: #636882;
-    --accent: #7c6aef;
-    --accent-light: #9d8ff5;
-    --accent-glow: rgba(124, 106, 239, 0.08);
-    --emerald: #10b981;
-    --emerald-soft: rgba(16, 185, 129, 0.10);
-    --amber: #f59e0b;
-    --amber-soft: rgba(245, 158, 11, 0.10);
-    --rose: #ef4444;
-    --rose-soft: rgba(239, 68, 68, 0.10);
+    --bg: #0a0a12;
+    --surface: #121220;
+    --surface2: #1a1a2e;
+    --surface3: #25253d;
+    --border: #2d2d4a;
+    --text: #f0f0f8;
+    --text-secondary: #b0b0cc;
+    --text-muted: #6a6a8e;
+    --accent: #8b5cf6;
+    --accent-light: #a78bfa;
+    --accent-glow: rgba(139, 92, 246, 0.15);
+    --emerald: #34d399;
+    --emerald-soft: rgba(52, 211, 153, 0.15);
+    --amber: #fbbf24;
+    --amber-soft: rgba(251, 191, 36, 0.15);
+    --rose: #fb7185;
+    --rose-soft: rgba(251, 113, 133, 0.15);
     --sky: #38bdf8;
-    --sky-soft: rgba(56, 189, 248, 0.10);
-    --slate: #475569;
+    --sky-soft: rgba(56, 189, 248, 0.12);
+    --cyan: #22d3ee;
+    --pink: #f472b6;
+    --orange: #fb923c;
+    --lime: #a3e635;
+    --slate: #64748b;
     --radius: 16px;
     --radius-sm: 10px;
   }
@@ -46,8 +50,8 @@
 
   /* ---- Hero / Dashboard Header ---- */
   .hero {
-    background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
-    border: 1px solid var(--border);
+    background: linear-gradient(135deg, #1a1040 0%, #0f1a2e 50%, #0a1628 100%);
+    border: 1px solid rgba(139,92,246,0.2);
     border-radius: 20px;
     padding: 2.5rem;
     margin-bottom: 2rem;
@@ -57,11 +61,21 @@
   .hero::before {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(124,106,239,0.06) 0%, transparent 70%);
+    top: -40%;
+    right: -15%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, rgba(56,189,248,0.04) 40%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(52,211,153,0.06) 0%, transparent 60%);
     pointer-events: none;
   }
 
@@ -168,21 +182,36 @@
   }
 
   .goal-card {
-    background: var(--surface);
+    background: linear-gradient(145deg, var(--surface) 0%, var(--surface2) 100%);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.5rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     display: flex;
     gap: 1.25rem;
     align-items: flex-start;
+    position: relative;
+    overflow: hidden;
   }
+  .goal-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .goal-card:hover::before { opacity: 1; }
   .goal-card:hover {
-    border-color: rgba(124, 106, 239, 0.4);
-    background: var(--surface2);
-    transform: translateY(-1px);
+    border-color: rgba(139, 92, 246, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3), 0 0 20px var(--accent-glow);
   }
+  .goal-card.s-ahead::before, .goal-card.s-done::before { background: linear-gradient(90deg, var(--emerald), var(--cyan)); }
+  .goal-card.s-on-track::before { background: linear-gradient(90deg, var(--amber), var(--orange)); }
+  .goal-card.s-behind::before { background: linear-gradient(90deg, var(--rose), var(--pink)); }
+  .goal-card.s-not-started::before { background: linear-gradient(90deg, var(--slate), var(--text-muted)); }
 
   .card-arc { flex-shrink: 0; position: relative; }
   .card-arc .arc-center {
@@ -213,10 +242,10 @@
     padding: 0.15rem 0.5rem;
     border-radius: 6px;
   }
-  .badge.ahead, .badge.done { background: var(--emerald-soft); color: var(--emerald); }
-  .badge.on-track { background: var(--amber-soft); color: var(--amber); }
-  .badge.behind { background: var(--rose-soft); color: var(--rose); }
-  .badge.not-started { background: var(--surface3); color: var(--text-muted); }
+  .badge.ahead, .badge.done { background: linear-gradient(135deg, rgba(52,211,153,0.18), rgba(34,211,238,0.12)); color: var(--emerald); border: 1px solid rgba(52,211,153,0.2); }
+  .badge.on-track { background: linear-gradient(135deg, rgba(251,191,36,0.18), rgba(251,146,60,0.12)); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
+  .badge.behind { background: linear-gradient(135deg, rgba(251,113,133,0.18), rgba(244,114,182,0.12)); color: var(--rose); border: 1px solid rgba(251,113,133,0.2); }
+  .badge.not-started { background: var(--surface3); color: var(--text-muted); border: 1px solid var(--border); }
 
   .card-goal {
     font-size: 0.95rem;
@@ -254,7 +283,7 @@
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   .detail-panel {
-    background: var(--surface);
+    background: linear-gradient(160deg, var(--surface2) 0%, var(--surface) 100%);
     border: 1px solid var(--border);
     border-radius: 20px;
     width: 92%;
@@ -358,13 +387,15 @@
   }
 
   .pace-insight {
-    background: var(--surface2);
+    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(56,189,248,0.05));
     border-radius: var(--radius-sm);
     padding: 1.25rem;
     margin-bottom: 1.75rem;
     font-size: 0.9rem;
     line-height: 1.7;
     color: var(--text-secondary);
+    border-left: 3px solid var(--accent);
+    border: 1px solid rgba(139,92,246,0.15);
     border-left: 3px solid var(--accent);
   }
   .pace-insight strong { color: var(--text); }
@@ -476,14 +507,21 @@ const Y0 = new Date(2026,0,1), Y1 = new Date(2026,11,31), NOW = new Date();
 const DAYS_IN = Math.floor((NOW-Y0)/864e5), DAYS_LEFT = Math.floor((Y1-NOW)/864e5);
 const WK_IN = DAYS_IN/7, WK_LEFT = DAYS_LEFT/7, YR_PCT = DAYS_IN/365;
 
-// SVG Arc helper
-function arcSVG(size, stroke, pct, color, trackColor) {
+// SVG Arc helper with gradient support
+let gradId = 0;
+function arcSVG(size, stroke, pct, color, color2) {
   const r = (size - stroke) / 2;
   const circ = 2 * Math.PI * r;
   const offset = circ * (1 - Math.min(pct, 1));
+  const id = 'g' + (gradId++);
+  const c2 = color2 || color;
   return `<svg class="arc-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-    <circle class="arc-track" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}" stroke="${trackColor || 'var(--surface3)'}"/>
-    <circle class="arc-fill" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}" stroke="${color}"
+    <defs><linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${color}"/>
+      <stop offset="100%" stop-color="${c2}"/>
+    </linearGradient></defs>
+    <circle class="arc-track" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}" stroke="rgba(255,255,255,0.06)"/>
+    <circle class="arc-fill" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}" stroke="url(#${id})"
       stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/>
   </svg>`;
 }
@@ -492,10 +530,14 @@ function statusCls(v) {
   v = (v||'').toLowerCase();
   return v === 'done' ? 'done' : v === 'ahead' ? 'ahead' : v === 'on track' ? 'on-track' : v === 'behind' ? 'behind' : 'not-started';
 }
-function arcColor(v) {
+function arcColors(v) {
   v = (v||'').toLowerCase();
-  return (v==='done'||v==='ahead') ? 'var(--emerald)' : v==='on track' ? 'var(--amber)' : v==='behind' ? 'var(--rose)' : 'var(--slate)';
+  if (v==='done'||v==='ahead') return ['#34d399','#22d3ee'];
+  if (v==='on track') return ['#fbbf24','#fb923c'];
+  if (v==='behind') return ['#fb7185','#f472b6'];
+  return ['#64748b','#475569'];
 }
+function arcColor(v) { return arcColors(v)[0]; }
 
 async function init() {
   const dashRows = await fetchSheet('dashboard');
@@ -522,7 +564,7 @@ async function init() {
   // Hero arcs
   document.getElementById('hero-arcs').innerHTML = `
     <div class="arc-container large">
-      ${arcSVG(160, 12, YR_PCT, 'var(--accent-light)')}
+      ${arcSVG(160, 12, YR_PCT, '#8b5cf6', '#38bdf8')}
       <div class="arc-center">
         <div class="arc-value" style="color:var(--accent-light)">${Math.round(YR_PCT*100)}%</div>
         <div class="arc-label">Year</div>
@@ -534,7 +576,7 @@ async function init() {
 
     <div class="hero-mini-arcs">
       <div class="arc-container small">
-        ${arcSVG(90, 7, (done+ahead)/totalGoals, 'var(--emerald)')}
+        ${arcSVG(90, 7, (done+ahead)/totalGoals, '#34d399', '#22d3ee')}
         <div class="arc-center">
           <div class="arc-value" style="color:var(--emerald)">${done+ahead}</div>
         </div>
@@ -542,7 +584,7 @@ async function init() {
       </div>
 
       <div class="arc-container small">
-        ${arcSVG(90, 7, onTrack/totalGoals, 'var(--amber)')}
+        ${arcSVG(90, 7, onTrack/totalGoals, '#fbbf24', '#fb923c')}
         <div class="arc-center">
           <div class="arc-value" style="color:var(--amber)">${onTrack}</div>
         </div>
@@ -550,7 +592,7 @@ async function init() {
       </div>
 
       <div class="arc-container small">
-        ${arcSVG(90, 7, behind/totalGoals, 'var(--rose)')}
+        ${arcSVG(90, 7, behind/totalGoals, '#fb7185', '#f472b6')}
         <div class="arc-center">
           <div class="arc-value" style="color:var(--rose)">${behind}</div>
         </div>
@@ -558,7 +600,7 @@ async function init() {
       </div>
 
       <div class="arc-container small">
-        ${arcSVG(90, 7, notStarted/totalGoals, 'var(--slate)')}
+        ${arcSVG(90, 7, notStarted/totalGoals, '#64748b', '#475569')}
         <div class="arc-center">
           <div class="arc-value" style="color:var(--text-muted)">${notStarted}</div>
         </div>
@@ -575,21 +617,24 @@ async function init() {
     const cls = statusCls(g.verdict);
     const isNum = !isNaN(g.targetNum) && g.targetNum > 0;
     const pctVal = Math.min(g.pct, 1);
-    const color = arcColor(g.verdict);
+    const [c1, c2] = arcColors(g.verdict);
+    const color = c1;
 
     let paceText = '';
+    let currentPaceText = '';
     if (isNum && g.progress < g.targetNum) {
       const rem = g.targetNum - g.progress;
-      const npw = rem / WK_LEFT;
-      if (npw < 1) paceText = `${(rem/(DAYS_LEFT/30.4)).toFixed(1)}/mo needed`;
-      else paceText = `${npw.toFixed(1)}/wk needed`;
+      const npm = rem / (DAYS_LEFT / 30.4);
+      paceText = `${npm.toFixed(1)}/mo needed`;
+      const cpm = g.progress / (DAYS_IN / 30.4);
+      if (g.progress > 0) currentPaceText = `${cpm.toFixed(1)}/mo`;
     }
 
     const card = document.createElement('div');
-    card.className = 'goal-card';
+    card.className = `goal-card s-${cls}`;
     card.innerHTML = `
       <div class="card-arc">
-        ${arcSVG(56, 5, isNum ? pctVal : 0, color)}
+        ${arcSVG(56, 5, isNum ? pctVal : 0, c1, c2)}
         <div class="arc-center"><div class="arc-value" style="color:${color}">${isNum ? Math.round(pctVal*100)+'%' : '—'}</div></div>
       </div>
       <div class="card-body">
@@ -600,7 +645,7 @@ async function init() {
         <div class="card-goal">${g.goal}</div>
         <div class="card-meta">
           ${isNum ? `<span>${g.progress} / ${g.target}</span>` : ''}
-          ${isNum && g.currentRate && g.currentRate!=='-' ? `<span><strong>${parseFloat(g.currentRate).toFixed(1)}</strong>/wk</span>` : ''}
+          ${currentPaceText ? `<span><strong>${currentPaceText}</strong> current</span>` : ''}
           ${paceText ? `<span>${paceText}</span>` : ''}
           <span>Due <strong>${g.dueDate}</strong></span>
         </div>
@@ -665,17 +710,20 @@ async function openDetail(goal) {
   const pctVal = Math.min(goal.pct, 1);
   const cls = statusCls(goal.verdict);
   const rem = isNum ? goal.targetNum - goal.progress : 0;
-  const color = arcColor(goal.verdict);
+  const [dc1, dc2] = arcColors(goal.verdict);
+  const color = dc1;
 
   let pace = '';
+  const MO_IN = DAYS_IN / 30.4, MO_LEFT = DAYS_LEFT / 30.4;
   if (isNum && goal.progress < goal.targetNum) {
-    const cpw = goal.progress / (WK_IN||1), npw = rem / WK_LEFT;
+    const cpm = goal.progress / (MO_IN||1), npm = rem / MO_LEFT;
     if (goal.progress === 0) {
-      pace = `You haven't started yet. To hit <strong>${goal.target}</strong> by <strong>${goal.dueDate}</strong>, you need <strong>${npw<1?(rem/(DAYS_LEFT/30.4)).toFixed(1)+' per month':npw.toFixed(1)+' per week'}</strong>. That's ${Math.ceil(rem)} to go in ${Math.round(WK_LEFT)} weeks.`;
-    } else if (cpw >= npw) {
-      pace = `You're doing <strong>${cpw.toFixed(1)}/week</strong> and only need <strong>${npw.toFixed(1)}/week</strong>. At this pace you'll finish with <strong>${Math.round((rem/cpw)*7)} days</strong> to spare.`;
+      pace = `You haven't started yet. To hit <strong>${goal.target}</strong> by <strong>${goal.dueDate}</strong>, you need <strong>${npm.toFixed(1)} per month</strong>. That's ${Math.ceil(rem)} to go in ${MO_LEFT.toFixed(1)} months.`;
+    } else if (cpm >= npm) {
+      const moToFinish = rem / cpm;
+      pace = `You're doing <strong>${cpm.toFixed(1)}/month</strong> and only need <strong>${npm.toFixed(1)}/month</strong>. At this pace you'll finish with <strong>${Math.round(moToFinish * 30.4)} days</strong> to spare.`;
     } else {
-      pace = `You're averaging <strong>${cpw.toFixed(1)}/week</strong> but need <strong>${npw.toFixed(1)}/week</strong>. Pick up by <strong>${(npw-cpw).toFixed(1)} more per week</strong> to get there.`;
+      pace = `You're averaging <strong>${cpm.toFixed(1)}/month</strong> but need <strong>${npm.toFixed(1)}/month</strong>. Pick up by <strong>${(npm-cpm).toFixed(1)} more per month</strong> to get there.`;
     }
   } else if (isNum && goal.progress >= goal.targetNum) {
     pace = `Target reached! <strong>${goal.progress} / ${goal.target}</strong> complete.`;
@@ -689,8 +737,8 @@ async function openDetail(goal) {
       <div class="d-stat"><div class="val">${rem}</div><div class="lbl">Remaining</div></div>
       <div class="d-stat"><div class="val ${clr}">${Math.round(pctVal*100)}%</div><div class="lbl">Complete</div></div>
       <div class="d-stat"><div class="val">${Math.round(YR_PCT*100)}%</div><div class="lbl">Year</div></div>
-      ${goal.currentRate&&goal.currentRate!=='-'?`<div class="d-stat"><div class="val">${parseFloat(goal.currentRate).toFixed(1)}</div><div class="lbl">Per Week</div></div>`:''}
-      ${rem>0?`<div class="d-stat"><div class="val amber">${(rem/WK_LEFT).toFixed(1)}</div><div class="lbl">Need/Wk</div></div>`:''}
+      ${goal.progress>0?`<div class="d-stat"><div class="val">${(goal.progress/(DAYS_IN/30.4)).toFixed(1)}</div><div class="lbl">Per Month</div></div>`:''}
+      ${rem>0?`<div class="d-stat"><div class="val amber">${(rem/(DAYS_LEFT/30.4)).toFixed(1)}</div><div class="lbl">Need/Mo</div></div>`:''}
     </div>`;
   }
 
@@ -700,7 +748,7 @@ async function openDetail(goal) {
     progHtml = `<div class="detail-progress">
       <div class="labels"><strong>${goal.progress} / ${goal.target}</strong><span>${Math.round(pctVal*100)}% complete</span></div>
       <div class="progress-rail">
-        <div class="progress-fill" style="width:${pctVal*100}%;background:${color}"></div>
+        <div class="progress-fill" style="width:${pctVal*100}%;background:linear-gradient(90deg,${dc1},${dc2})"></div>
         <div class="marker" style="left:${yearMarker}%" title="Year progress: ${yearMarker}%"></div>
       </div>
     </div>`;
@@ -733,7 +781,7 @@ async function openDetail(goal) {
 
   content.innerHTML = `
     <div class="detail-hero">
-      <div class="card-arc">${arcSVG(80, 7, isNum?pctVal:0, color)}<div class="arc-center" style="top:8px"><div class="arc-value" style="color:${color};font-size:1.3rem">${isNum?Math.round(pctVal*100)+'%':'—'}</div></div></div>
+      <div class="card-arc">${arcSVG(80, 7, isNum?pctVal:0, dc1, dc2)}<div class="arc-center" style="top:8px"><div class="arc-value" style="color:${color};font-size:1.3rem">${isNum?Math.round(pctVal*100)+'%':'—'}</div></div></div>
       <div class="detail-hero-info"><h2>${goal.goal}</h2><p>${goal.zone} \u00b7 Due ${goal.dueDate}</p></div>
     </div>
     ${stats}${progHtml}${pace?`<div class="pace-insight">${pace}</div>`:''}${tableHtml}`;
