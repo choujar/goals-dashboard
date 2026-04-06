@@ -645,8 +645,16 @@ async function init(forceRefresh) {
       else if (gap <= 0.10) verdict = 'Close';
       else verdict = 'Behind';
     }
-    goals.push({ zone:r[1], goal:r[2], progress:parseFloat(r[3])||0, target:r[4], targetNum:tgt,
-      pct, pctStr:r[5], status:rawStatus, dueDate:r[7], paceNeeded:r[8], currentRate:r[9], verdict });
+    // Classify goal type for proper display
+    const targetRaw = r[4];
+    let goalType = 'count'; // default: count up to N
+    if (targetRaw === '—' || targetRaw === '-' || !targetRaw) goalType = 'open';
+    else if (targetRaw.includes('%')) goalType = 'percent';
+    else if (tgt === 1) goalType = 'binary';
+    else if (tgt <= 0 || isNaN(tgt)) goalType = 'open';
+
+    goals.push({ zone:r[1], goal:r[2], progress:parseFloat(r[3])||0, target:targetRaw, targetNum:tgt,
+      pct, pctStr:r[5], status:rawStatus, dueDate:r[7], paceNeeded:r[8], currentRate:r[9], verdict, goalType });
   }
 
   const done = goals.filter(g => g.verdict==='DONE'||g.verdict==='Done').length;
@@ -712,27 +720,40 @@ async function init(forceRefresh) {
 
   for (const g of goals) {
     const cls = statusCls(g.verdict);
-    const isNum = !isNaN(g.targetNum) && g.targetNum > 0;
+    const isCount = g.goalType === 'count';
     const pctVal = Math.min(g.pct, 1);
     const [c1, c2] = arcColors(g.verdict);
     const color = c1;
 
-    let paceText = '';
-    let currentPaceText = '';
-    if (isNum && g.progress < g.targetNum) {
-      const rem = g.targetNum - g.progress;
-      const npm = rem / (DAYS_LEFT / 30.4);
-      paceText = `${npm.toFixed(1)}/mo needed`;
-      const cpm = g.progress / (DAYS_IN / 30.4);
-      if (g.progress > 0) currentPaceText = `${cpm.toFixed(1)}/mo`;
+    let paceText = '', currentPaceText = '', fracText = '', arcPct = 0;
+
+    if (isCount) {
+      arcPct = pctVal;
+      fracText = `${g.progress} / ${g.targetNum}`;
+      if (g.progress < g.targetNum) {
+        const rem = g.targetNum - g.progress;
+        const npm = rem / (DAYS_LEFT / 30.4);
+        paceText = `${npm.toFixed(1)}/mo needed`;
+        if (g.progress > 0) currentPaceText = `${(g.progress / (DAYS_IN / 30.4)).toFixed(1)}/mo`;
+      }
+    } else if (g.goalType === 'percent') {
+      arcPct = g.pctStr ? parseFloat(g.pctStr) / 100 : 0;
+      fracText = g.pctStr || '0%';
+    } else if (g.goalType === 'binary') {
+      arcPct = g.progress >= 1 ? 1 : 0;
+      fracText = g.progress >= 1 ? 'Done' : 'Not yet';
+    } else {
+      // open-ended
+      arcPct = 0;
+      fracText = g.progress > 0 ? `${g.progress} logged` : '';
     }
 
     const card = document.createElement('div');
     card.className = `goal-card s-${cls}`;
     card.innerHTML = `
       <div class="card-arc">
-        ${arcSVG(56, 5, isNum ? pctVal : 0, c1, c2)}
-        <div class="arc-center"><div class="arc-value" style="color:${color}">${isNum ? Math.round(pctVal*100)+'%' : '—'}</div></div>
+        ${arcSVG(56, 5, arcPct, c1, c2)}
+        <div class="arc-center"><div class="arc-value" style="color:${color}">${arcPct > 0 ? Math.round(arcPct*100)+'%' : '—'}</div></div>
       </div>
       <div class="card-body">
         <div class="card-top">
@@ -741,7 +762,7 @@ async function init(forceRefresh) {
         </div>
         <div class="card-goal">${g.goal}</div>
         <div class="card-meta">
-          ${isNum ? `<span>${g.progress} / ${g.target}</span>` : ''}
+          ${fracText ? `<span>${fracText}</span>` : ''}
           ${currentPaceText ? `<span><strong>${currentPaceText}</strong> current</span>` : ''}
           ${paceText ? `<span>${paceText}</span>` : ''}
           <span>Due <strong>${g.dueDate}</strong></span>
@@ -803,47 +824,67 @@ async function openDetail(goal) {
   let rows = sheetCache[sk];
   if (!rows && sk) { rows = await fetchSheet(sk, false); sheetCache[sk] = rows; }
 
-  const isNum = !isNaN(goal.targetNum) && goal.targetNum > 0;
+  const isCount = goal.goalType === 'count';
   const pctVal = Math.min(goal.pct, 1);
   const cls = statusCls(goal.verdict);
-  const rem = isNum ? goal.targetNum - goal.progress : 0;
+  const rem = isCount ? goal.targetNum - goal.progress : 0;
   const [dc1, dc2] = arcColors(goal.verdict);
   const color = dc1;
+  const MO_IN = DAYS_IN / 30.4, MO_LEFT = DAYS_LEFT / 30.4;
 
   let pace = '';
-  const MO_IN = DAYS_IN / 30.4, MO_LEFT = DAYS_LEFT / 30.4;
-  if (isNum && goal.progress < goal.targetNum) {
+  if (isCount && goal.progress < goal.targetNum) {
     const cpm = goal.progress / (MO_IN||1), npm = rem / MO_LEFT;
     if (goal.progress === 0) {
-      pace = `You haven't started yet. To hit <strong>${goal.target}</strong> by <strong>${goal.dueDate}</strong>, you need <strong>${npm.toFixed(1)} per month</strong>. That's ${Math.ceil(rem)} to go in ${MO_LEFT.toFixed(1)} months.`;
+      pace = `You haven't started yet. To hit <strong>${goal.targetNum}</strong> by <strong>${goal.dueDate}</strong>, you need <strong>${npm.toFixed(1)} per month</strong>. That's ${Math.ceil(rem)} to go in ${MO_LEFT.toFixed(1)} months.`;
     } else if (cpm >= npm) {
-      const moToFinish = rem / cpm;
-      pace = `You're doing <strong>${cpm.toFixed(1)}/month</strong> and only need <strong>${npm.toFixed(1)}/month</strong>. At this pace you'll finish with <strong>${Math.round(moToFinish * 30.4)} days</strong> to spare.`;
+      pace = `You're doing <strong>${cpm.toFixed(1)}/month</strong> and only need <strong>${npm.toFixed(1)}/month</strong>. At this pace you'll finish with <strong>${Math.round((rem/cpm)*30.4)} days</strong> to spare.`;
     } else {
       pace = `You're averaging <strong>${cpm.toFixed(1)}/month</strong> but need <strong>${npm.toFixed(1)}/month</strong>. Pick up by <strong>${(npm-cpm).toFixed(1)} more per month</strong> to get there.`;
     }
-  } else if (isNum && goal.progress >= goal.targetNum) {
-    pace = `Target reached! <strong>${goal.progress} / ${goal.target}</strong> complete.`;
+  } else if (isCount && goal.progress >= goal.targetNum) {
+    pace = `Target reached! <strong>${goal.progress} / ${goal.targetNum}</strong> complete.`;
+  } else if (goal.goalType === 'binary') {
+    pace = goal.progress >= 1 ? 'Done!' : `One-time goal. Due <strong>${goal.dueDate}</strong>.`;
+  } else if (goal.goalType === 'percent') {
+    pace = `This is a daily habit \u2014 track it in the spreadsheet and your percentage will update here.`;
+  } else if (goal.goalType === 'open') {
+    pace = goal.progress > 0 ? `You've logged <strong>${goal.progress}</strong> so far. Keep going!` : 'Open-ended goal \u2014 start logging in the spreadsheet.';
   }
 
-  let stats = '';
-  if (isNum) {
+  let stats = '', detailArcPct = 0;
+  if (isCount) {
+    detailArcPct = pctVal;
     const clr = cls==='behind'?'rose':(cls==='ahead'||cls==='done')?'emerald':'amber';
     stats = `<div class="detail-stats">
       <div class="d-stat"><div class="val sky">${goal.progress}</div><div class="lbl">Done</div></div>
       <div class="d-stat"><div class="val">${rem}</div><div class="lbl">Remaining</div></div>
       <div class="d-stat"><div class="val ${clr}">${Math.round(pctVal*100)}%</div><div class="lbl">Complete</div></div>
       <div class="d-stat"><div class="val">${Math.round(YR_PCT*100)}%</div><div class="lbl">Year</div></div>
-      ${goal.progress>0?`<div class="d-stat"><div class="val">${(goal.progress/(DAYS_IN/30.4)).toFixed(1)}</div><div class="lbl">Per Month</div></div>`:''}
-      ${rem>0?`<div class="d-stat"><div class="val amber">${(rem/(DAYS_LEFT/30.4)).toFixed(1)}</div><div class="lbl">Need/Mo</div></div>`:''}
+      ${goal.progress>0?`<div class="d-stat"><div class="val">${(goal.progress/MO_IN).toFixed(1)}</div><div class="lbl">Per Month</div></div>`:''}
+      ${rem>0?`<div class="d-stat"><div class="val amber">${(rem/MO_LEFT).toFixed(1)}</div><div class="lbl">Need/Mo</div></div>`:''}
+    </div>`;
+  } else if (goal.goalType === 'percent') {
+    const pctProgress = goal.pctStr ? parseFloat(goal.pctStr) : 0;
+    detailArcPct = pctProgress / 100;
+    stats = `<div class="detail-stats">
+      <div class="d-stat"><div class="val sky">${goal.pctStr || '0%'}</div><div class="lbl">Current</div></div>
+      <div class="d-stat"><div class="val">${goal.target}</div><div class="lbl">Target</div></div>
+      <div class="d-stat"><div class="val">${Math.round(YR_PCT*100)}%</div><div class="lbl">Year</div></div>
+    </div>`;
+  } else if (goal.goalType === 'binary') {
+    detailArcPct = goal.progress >= 1 ? 1 : 0;
+    stats = `<div class="detail-stats">
+      <div class="d-stat"><div class="val ${goal.progress >= 1 ? 'emerald' : 'rose'}">${goal.progress >= 1 ? 'Done' : 'Not Yet'}</div><div class="lbl">Status</div></div>
+      <div class="d-stat"><div class="val">${Math.round(YR_PCT*100)}%</div><div class="lbl">Year</div></div>
     </div>`;
   }
 
   let progHtml = '';
-  if (isNum) {
+  if (isCount) {
     const yearMarker = Math.round(YR_PCT*100);
     progHtml = `<div class="detail-progress">
-      <div class="labels"><strong>${goal.progress} / ${goal.target}</strong><span>${Math.round(pctVal*100)}% complete</span></div>
+      <div class="labels"><strong>${goal.progress} / ${goal.targetNum}</strong><span>${Math.round(pctVal*100)}% complete</span></div>
       <div class="progress-rail">
         <div class="progress-fill" style="width:${pctVal*100}%;background:linear-gradient(90deg,${dc1},${dc2})"></div>
         <div class="marker" style="left:${yearMarker}%" title="Year progress: ${yearMarker}%"></div>
@@ -878,7 +919,7 @@ async function openDetail(goal) {
 
   content.innerHTML = `
     <div class="detail-hero">
-      <div class="card-arc">${arcSVG(80, 7, isNum?pctVal:0, dc1, dc2)}<div class="arc-center" style="top:8px"><div class="arc-value" style="color:${color};font-size:1.3rem">${isNum?Math.round(pctVal*100)+'%':'—'}</div></div></div>
+      <div class="card-arc">${arcSVG(80, 7, detailArcPct, dc1, dc2)}<div class="arc-center" style="top:8px"><div class="arc-value" style="color:${color};font-size:1.3rem">${detailArcPct>0?Math.round(detailArcPct*100)+'%':'—'}</div></div></div>
       <div class="detail-hero-info"><h2>${goal.goal}</h2><p>${goal.zone} \u00b7 Due ${goal.dueDate}</p></div>
     </div>
     ${stats}${progHtml}${pace?`<div class="pace-insight">${pace}</div>`:''}${tableHtml}`;
