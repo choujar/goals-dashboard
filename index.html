@@ -528,12 +528,12 @@ function arcSVG(size, stroke, pct, color, color2) {
 
 function statusCls(v) {
   v = (v||'').toLowerCase();
-  return v === 'done' ? 'done' : v === 'ahead' ? 'ahead' : v === 'on track' ? 'on-track' : v === 'behind' ? 'behind' : 'not-started';
+  return v === 'done' ? 'done' : v === 'ahead' ? 'ahead' : (v === 'close' || v === 'on track') ? 'on-track' : v === 'behind' ? 'behind' : 'not-started';
 }
 function arcColors(v) {
   v = (v||'').toLowerCase();
   if (v==='done'||v==='ahead') return ['#34d399','#22d3ee'];
-  if (v==='on track') return ['#fbbf24','#fb923c'];
+  if (v==='close'||v==='on track') return ['#fbbf24','#fb923c'];
   if (v==='behind') return ['#fb7185','#f472b6'];
   return ['#64748b','#475569'];
 }
@@ -548,15 +548,24 @@ async function init() {
   for (let i = hi+1; i < dashRows.length; i++) {
     const r = dashRows[i]; if (!r[1]) continue;
     const tgt = parseFloat(r[4]), pct = r[5] ? parseFloat(r[5])/100 : 0;
+    const rawStatus = r[6], rawVerdict = r[11] || r[6];
+    // Smarter verdict: "Close" if within 10pp of on-track
+    let verdict = rawVerdict;
+    if (!isNaN(tgt) && tgt > 0 && rawVerdict !== 'DONE' && rawVerdict !== 'Done' && rawStatus !== 'Not Started') {
+      const gap = YR_PCT - pct; // positive = behind, negative = ahead
+      if (pct >= YR_PCT) verdict = 'Ahead';
+      else if (gap <= 0.10) verdict = 'Close';
+      else verdict = 'Behind';
+    }
     goals.push({ zone:r[1], goal:r[2], progress:parseFloat(r[3])||0, target:r[4], targetNum:tgt,
-      pct, pctStr:r[5], status:r[6], dueDate:r[7], paceNeeded:r[8], currentRate:r[9], verdict:r[11]||r[6] });
+      pct, pctStr:r[5], status:rawStatus, dueDate:r[7], paceNeeded:r[8], currentRate:r[9], verdict });
   }
 
   const done = goals.filter(g => g.verdict==='DONE'||g.verdict==='Done').length;
   const ahead = goals.filter(g => g.verdict==='Ahead').length;
+  const close = goals.filter(g => g.verdict==='Close').length;
   const behind = goals.filter(g => g.verdict==='Behind').length;
   const notStarted = goals.filter(g => g.status==='Not Started'||g.verdict==='-').length;
-  const onTrack = goals.length - done - ahead - behind - notStarted;
   const totalGoals = goals.length;
 
   document.getElementById('last-updated').textContent = 'Live from Sheets \u00b7 ' + new Date().toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
@@ -584,9 +593,9 @@ async function init() {
       </div>
 
       <div class="arc-container small">
-        ${arcSVG(90, 7, onTrack/totalGoals, '#fbbf24', '#fb923c')}
+        ${arcSVG(90, 7, close/totalGoals, '#fbbf24', '#fb923c')}
         <div class="arc-center">
-          <div class="arc-value" style="color:var(--amber)">${onTrack}</div>
+          <div class="arc-value" style="color:var(--amber)">${close}</div>
         </div>
         <div class="arc-sublabel">Close</div>
       </div>
