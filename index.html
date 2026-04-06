@@ -4,316 +4,370 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sahil's 2026 Goals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --surface2: #232736;
-    --border: #2e3345;
-    --text: #e4e6f0;
-    --text-dim: #8b8fa3;
-    --text-muted: #5c6078;
-    --accent: #6c7bf7;
-    --accent-glow: rgba(108, 123, 247, 0.15);
-    --green: #34d399;
-    --green-dim: rgba(52, 211, 153, 0.12);
-    --amber: #fbbf24;
-    --amber-dim: rgba(251, 191, 36, 0.12);
-    --red: #f87171;
-    --red-dim: rgba(248, 113, 113, 0.12);
-    --blue: #60a5fa;
-    --radius: 12px;
-    --radius-sm: 8px;
+    --bg: #0c0e14;
+    --surface: #14171f;
+    --surface2: #1c2029;
+    --surface3: #242833;
+    --border: #2a2e3a;
+    --text: #eaecf2;
+    --text-secondary: #a0a5b8;
+    --text-muted: #636882;
+    --accent: #7c6aef;
+    --accent-light: #9d8ff5;
+    --accent-glow: rgba(124, 106, 239, 0.08);
+    --emerald: #10b981;
+    --emerald-soft: rgba(16, 185, 129, 0.10);
+    --amber: #f59e0b;
+    --amber-soft: rgba(245, 158, 11, 0.10);
+    --rose: #ef4444;
+    --rose-soft: rgba(239, 68, 68, 0.10);
+    --sky: #38bdf8;
+    --sky-soft: rgba(56, 189, 248, 0.10);
+    --slate: #475569;
+    --radius: 16px;
+    --radius-sm: 10px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
   }
 
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
-  }
+  .container { max-width: 1280px; margin: 0 auto; padding: 2.5rem 2rem; }
 
-  /* ---- Header ---- */
-  .header {
-    margin-bottom: 2rem;
-  }
-  .header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.25rem;
-  }
-  .header h1 span { color: var(--accent); }
-  .header p { color: var(--text-dim); font-size: 0.95rem; }
-
-  /* ---- Year Progress ---- */
-  .year-bar {
-    background: var(--surface);
+  /* ---- Hero / Dashboard Header ---- */
+  .hero {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    flex-wrap: wrap;
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
   }
-  .year-bar .track {
-    flex: 1;
-    min-width: 200px;
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(124,106,239,0.06) 0%, transparent 70%);
+    pointer-events: none;
   }
-  .year-bar .track-label {
+
+  .hero-top {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--text-dim);
+    align-items: flex-start;
+    margin-bottom: 2rem;
   }
-  .year-bar .track-label strong {
-    color: var(--text);
-    font-size: 1.1rem;
+  .hero-top h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
   }
-  .progress-rail {
-    height: 10px;
-    background: var(--surface2);
-    border-radius: 5px;
-    overflow: hidden;
-    position: relative;
+  .hero-top h1 span { color: var(--accent-light); }
+  .hero-top .updated {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
   }
-  .progress-fill {
-    height: 100%;
-    border-radius: 5px;
-    transition: width 0.8s ease;
-    background: linear-gradient(90deg, var(--accent), #818cf8);
-  }
-  .year-stats {
+
+  .hero-arcs {
     display: flex;
-    gap: 1.5rem;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
     flex-wrap: wrap;
   }
-  .mini-stat {
-    text-align: center;
-    min-width: 70px;
+
+  /* Circular Arc */
+  .arc-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
   }
-  .mini-stat .num {
-    font-size: 1.6rem;
+  .arc-container.large { min-width: 180px; }
+  .arc-container.small { min-width: 100px; }
+
+  .arc-svg { transform: rotate(-90deg); }
+  .arc-track {
+    fill: none;
+    stroke: var(--surface3);
+  }
+  .arc-fill {
+    fill: none;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease;
+  }
+
+  .arc-center {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .arc-container.large .arc-center { top: 14px; left: 0; right: 0; bottom: 0; }
+  .arc-container.small .arc-center { top: 8px; left: 0; right: 0; bottom: 0; }
+
+  .arc-value {
     font-weight: 700;
+    line-height: 1;
   }
-  .mini-stat .label {
-    font-size: 0.75rem;
-    color: var(--text-dim);
+  .arc-container.large .arc-value { font-size: 2.2rem; }
+  .arc-container.small .arc-value { font-size: 1.4rem; }
+
+  .arc-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+    margin-top: 0.25rem;
+    text-align: center;
   }
-  .mini-stat.green .num { color: var(--green); }
-  .mini-stat.amber .num { color: var(--amber); }
-  .mini-stat.red .num { color: var(--red); }
-  .mini-stat.blue .num { color: var(--blue); }
+  .arc-sublabel {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 0.75rem;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .hero-divider {
+    width: 1px;
+    height: 100px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  .hero-mini-arcs {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 
   /* ---- Goal Cards Grid ---- */
   .goals-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
     gap: 1rem;
-    margin-bottom: 2rem;
   }
 
   .goal-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 1.25rem;
+    padding: 1.5rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
   }
   .goal-card:hover {
-    border-color: var(--accent);
-    box-shadow: 0 0 20px var(--accent-glow);
+    border-color: rgba(124, 106, 239, 0.4);
+    background: var(--surface2);
     transform: translateY(-1px);
   }
-  .goal-card.done { border-left: 3px solid var(--green); }
-  .goal-card.ahead { border-left: 3px solid var(--green); }
-  .goal-card.on-track { border-left: 3px solid var(--amber); }
-  .goal-card.behind { border-left: 3px solid var(--red); }
-  .goal-card.not-started { border-left: 3px solid var(--text-muted); }
+
+  .card-arc { flex-shrink: 0; position: relative; }
+  .card-arc .arc-center {
+    top: 4px; left: 0; right: 0; bottom: 0;
+  }
+  .card-arc .arc-value { font-size: 0.95rem; font-weight: 700; }
+
+  .card-body { flex: 1; min-width: 0; }
 
   .card-top {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 0.75rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
   }
   .card-zone {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-dim);
-    background: var(--surface2);
-    padding: 0.2rem 0.6rem;
-    border-radius: 4px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
   }
-  .card-verdict {
-    font-size: 0.7rem;
+  .badge {
+    font-size: 0.65rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    padding: 0.2rem 0.6rem;
-    border-radius: 4px;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
   }
-  .card-verdict.done { background: var(--green-dim); color: var(--green); }
-  .card-verdict.ahead { background: var(--green-dim); color: var(--green); }
-  .card-verdict.on-track { background: var(--amber-dim); color: var(--amber); }
-  .card-verdict.behind { background: var(--red-dim); color: var(--red); }
-  .card-verdict.not-started { background: var(--surface2); color: var(--text-muted); }
+  .badge.ahead, .badge.done { background: var(--emerald-soft); color: var(--emerald); }
+  .badge.on-track { background: var(--amber-soft); color: var(--amber); }
+  .badge.behind { background: var(--rose-soft); color: var(--rose); }
+  .badge.not-started { background: var(--surface3); color: var(--text-muted); }
 
   .card-goal {
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    margin-bottom: 1rem;
     line-height: 1.3;
-  }
-
-  .card-progress {
     margin-bottom: 0.75rem;
-  }
-  .card-progress .bar-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-    margin-bottom: 0.35rem;
-  }
-  .card-progress .bar-label .frac { color: var(--text); font-weight: 600; }
-  .card-progress .bar-label .pct { color: var(--text-dim); }
-  .card-bar {
-    height: 6px;
-    background: var(--surface2);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .card-bar-fill {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.6s ease;
-  }
-  .card-bar-fill.green { background: var(--green); }
-  .card-bar-fill.amber { background: var(--amber); }
-  .card-bar-fill.red { background: var(--red); }
-  .card-bar-fill.muted { background: var(--text-muted); }
-
-  .card-stats {
-    display: flex;
-    gap: 1rem;
-    font-size: 0.78rem;
-    color: var(--text-dim);
-    border-top: 1px solid var(--border);
-    padding-top: 0.75rem;
-  }
-  .card-stat strong {
     color: var(--text);
-    font-weight: 600;
   }
 
-  /* ---- Detail Panel ---- */
+  .card-meta {
+    display: flex;
+    gap: 1.25rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .card-meta strong { color: var(--text-secondary); font-weight: 600; }
+
+  /* ---- Detail Overlay ---- */
   .detail-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.65);
     z-index: 100;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
   }
-  .detail-overlay.open { display: flex; justify-content: center; align-items: flex-start; padding-top: 5vh; }
+  .detail-overlay.open {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 4vh;
+    animation: fadeIn 0.15s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   .detail-panel {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    width: 90%;
+    border-radius: 20px;
+    width: 92%;
     max-width: 800px;
-    max-height: 85vh;
+    max-height: 88vh;
     overflow-y: auto;
-    padding: 2rem;
+    padding: 2.5rem;
     position: relative;
+    animation: slideUp 0.2s ease;
   }
-  .detail-panel::-webkit-scrollbar { width: 6px; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .detail-panel::-webkit-scrollbar { width: 5px; }
   .detail-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
   .detail-close {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 1.25rem;
+    right: 1.25rem;
     background: var(--surface2);
     border: 1px solid var(--border);
-    color: var(--text-dim);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    color: var(--text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.15s;
   }
-  .detail-close:hover { background: var(--border); color: var(--text); }
+  .detail-close:hover { background: var(--surface3); color: var(--text); }
 
-  .detail-header {
-    margin-bottom: 1.5rem;
+  .detail-hero {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
   }
-  .detail-header h2 { font-size: 1.4rem; margin-bottom: 0.25rem; }
-  .detail-header p { color: var(--text-dim); font-size: 0.9rem; }
+  .detail-hero-info { flex: 1; }
+  .detail-hero-info h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+  .detail-hero-info p { color: var(--text-muted); font-size: 0.9rem; }
 
   .detail-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
     gap: 0.75rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
   }
-  .detail-stat-card {
+  .d-stat {
     background: var(--surface2);
     border-radius: var(--radius-sm);
     padding: 1rem;
     text-align: center;
+    border: 1px solid var(--border);
   }
-  .detail-stat-card .val {
-    font-size: 1.5rem;
-    font-weight: 700;
-  }
-  .detail-stat-card .val.green { color: var(--green); }
-  .detail-stat-card .val.red { color: var(--red); }
-  .detail-stat-card .val.amber { color: var(--amber); }
-  .detail-stat-card .val.blue { color: var(--blue); }
-  .detail-stat-card .lbl {
-    font-size: 0.75rem;
-    color: var(--text-dim);
+  .d-stat .val { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+  .d-stat .val.emerald { color: var(--emerald); }
+  .d-stat .val.rose { color: var(--rose); }
+  .d-stat .val.amber { color: var(--amber); }
+  .d-stat .val.sky { color: var(--sky); }
+  .d-stat .lbl {
+    font-size: 0.65rem;
+    color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-top: 0.25rem;
+    letter-spacing: 0.06em;
+    margin-top: 0.3rem;
+    font-weight: 500;
   }
 
-  .detail-progress {
-    margin-bottom: 1.5rem;
-  }
-  .detail-progress .progress-rail { height: 14px; }
+  .detail-progress { margin-bottom: 1.75rem; }
   .detail-progress .labels {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.5rem;
     font-size: 0.85rem;
+    margin-bottom: 0.5rem;
   }
   .detail-progress .labels strong { color: var(--text); }
-  .detail-progress .labels span { color: var(--text-dim); }
+  .detail-progress .labels span { color: var(--text-muted); }
+  .progress-rail {
+    height: 10px;
+    background: var(--surface3);
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+  }
+  .progress-rail .marker {
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    width: 2px;
+    background: var(--text-secondary);
+    border-radius: 1px;
+    opacity: 0.6;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.8s ease;
+  }
+
+  .pace-insight {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 1.25rem;
+    margin-bottom: 1.75rem;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    border-left: 3px solid var(--accent);
+  }
+  .pace-insight strong { color: var(--text); }
 
   .detail-table {
     width: 100%;
@@ -323,82 +377,62 @@
   .detail-table th {
     text-align: left;
     font-weight: 600;
-    color: var(--text-dim);
+    color: var(--text-muted);
     text-transform: uppercase;
-    font-size: 0.7rem;
-    letter-spacing: 0.06em;
-    padding: 0.6rem 0.75rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 0.65rem 0.75rem;
     border-bottom: 1px solid var(--border);
   }
   .detail-table td {
-    padding: 0.55rem 0.75rem;
-    border-bottom: 1px solid var(--border);
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid rgba(42,46,58,0.5);
     color: var(--text);
   }
   .detail-table tr:last-child td { border-bottom: none; }
-  .detail-table tr.done-row td { color: var(--text-dim); }
-  .detail-table .check { color: var(--green); font-weight: 700; }
+  .detail-table tr.done-row td { color: var(--text-muted); }
+  .detail-table .check { color: var(--emerald); }
   .detail-table .uncheck { color: var(--text-muted); }
 
-  .pace-insight {
-    background: var(--surface2);
-    border-radius: var(--radius-sm);
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: var(--text-dim);
-    border-left: 3px solid var(--accent);
-  }
-  .pace-insight strong { color: var(--text); }
-
   /* ---- Loading ---- */
-  .loading {
-    text-align: center;
-    padding: 4rem;
-    color: var(--text-dim);
-  }
-  .loading .spinner {
-    width: 32px; height: 32px;
-    border: 3px solid var(--border);
+  .loading { text-align: center; padding: 6rem; color: var(--text-muted); }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 2.5px solid var(--surface3);
     border-top-color: var(--accent);
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    animation: spin 0.7s linear infinite;
     margin: 0 auto 1rem;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ---- Responsive ---- */
-  @media (max-width: 720px) {
+  @media (max-width: 768px) {
+    .container { padding: 1.25rem; }
+    .hero { padding: 1.5rem; }
+    .hero-arcs { gap: 1.5rem; }
+    .hero-divider { display: none; }
     .goals-grid { grid-template-columns: 1fr; }
-    .year-bar { flex-direction: column; gap: 1rem; }
-    .container { padding: 1rem; }
-    .header h1 { font-size: 1.5rem; }
+    .hero-top h1 { font-size: 1.3rem; }
+    .detail-panel { padding: 1.5rem; }
   }
 </style>
 </head>
 <body>
 <div class="container">
-  <div class="header">
-    <h1><span>2026</span> Goals Dashboard</h1>
-    <p>Live from Google Sheets &middot; <span id="last-updated"></span></p>
-  </div>
-
-  <div class="year-bar" id="year-bar">
-    <div class="track">
-      <div class="track-label">
-        <span>Year Progress</span>
-        <strong id="year-pct">—</strong>
-      </div>
-      <div class="progress-rail">
-        <div class="progress-fill" id="year-fill" style="width:0%"></div>
+  <div class="hero" id="hero">
+    <div class="hero-top">
+      <div>
+        <h1><span>2026</span> Goals</h1>
+        <div class="updated" id="last-updated"></div>
       </div>
     </div>
-    <div class="year-stats" id="year-stats"></div>
+    <div class="hero-arcs" id="hero-arcs">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
   </div>
 
   <div id="goals-area">
-    <div class="loading"><div class="spinner"></div>Loading goals from spreadsheet...</div>
+    <div class="loading"><div class="spinner"></div>Loading goals...</div>
   </div>
 </div>
 
@@ -413,428 +447,302 @@
 const BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSzT76dnq0RWElcySPShgxC6hk_iHKawPwkj1bsH9EjrJGKzMZ66Xo_Mpb8ey7yJDYm7M6eJdBkSKyv/pub?output=csv';
 
 const SHEETS = {
-  dashboard: 147941376,
-  parkrun: 712844439,
-  fitness: 928751721,
-  music: 392176720,
-  listening: 451507711,
-  movies: 1147366727,
-  creative: 108823288,
-  blood: 1258053663,
-  health: 828416010,
-  volunteering: 1860768583,
-  lifeadmin: 1864003038,
-  getaways: 187836966,
+  dashboard: 147941376, parkrun: 712844439, fitness: 928751721,
+  music: 392176720, listening: 451507711, movies: 1147366727,
+  creative: 108823288, blood: 1258053663, health: 828416010,
+  volunteering: 1860768583, lifeadmin: 1864003038, getaways: 187836966,
 };
 
-// CSV parser (handles quoted fields with commas)
 function parseCSV(text) {
-  const rows = [];
-  let current = '';
-  let inQuotes = false;
-  const lines = text.split('\n');
-  for (const line of lines) {
-    if (inQuotes) {
-      current += '\n' + line;
-      if ((line.match(/"/g) || []).length % 2 === 1) {
-        inQuotes = false;
-        rows.push(parseCSVLine(current));
-        current = '';
-      }
-    } else {
-      if ((line.match(/"/g) || []).length % 2 === 1) {
-        inQuotes = true;
-        current = line;
-      } else {
-        rows.push(parseCSVLine(line));
-      }
-    }
+  const rows = []; let current = ''; let inQ = false;
+  for (const line of text.split('\n')) {
+    if (inQ) { current += '\n' + line; if ((line.match(/"/g)||[]).length % 2 === 1) { inQ = false; rows.push(parseLine(current)); current = ''; } }
+    else { if ((line.match(/"/g)||[]).length % 2 === 1) { inQ = true; current = line; } else rows.push(parseLine(line)); }
   }
   return rows;
 }
-
-function parseCSVLine(line) {
-  const result = [];
-  let current = '';
-  let inQuotes = false;
+function parseLine(line) {
+  const r = []; let c = ''; let q = false;
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
-    if (inQuotes) {
-      if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
-      else if (ch === '"') inQuotes = false;
-      else current += ch;
-    } else {
-      if (ch === '"') inQuotes = true;
-      else if (ch === ',') { result.push(current.trim()); current = ''; }
-      else current += ch;
-    }
+    if (q) { if (ch === '"' && line[i+1] === '"') { c += '"'; i++; } else if (ch === '"') q = false; else c += ch; }
+    else { if (ch === '"') q = true; else if (ch === ',') { r.push(c.trim()); c = ''; } else c += ch; }
   }
-  result.push(current.trim());
-  return result;
+  r.push(c.trim()); return r;
+}
+async function fetchSheet(key) { const r = await fetch(`${BASE}&gid=${SHEETS[key]}`); return parseCSV(await r.text()); }
+
+const Y0 = new Date(2026,0,1), Y1 = new Date(2026,11,31), NOW = new Date();
+const DAYS_IN = Math.floor((NOW-Y0)/864e5), DAYS_LEFT = Math.floor((Y1-NOW)/864e5);
+const WK_IN = DAYS_IN/7, WK_LEFT = DAYS_LEFT/7, YR_PCT = DAYS_IN/365;
+
+// SVG Arc helper
+function arcSVG(size, stroke, pct, color, trackColor) {
+  const r = (size - stroke) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - Math.min(pct, 1));
+  return `<svg class="arc-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle class="arc-track" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}" stroke="${trackColor || 'var(--surface3)'}"/>
+    <circle class="arc-fill" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}" stroke="${color}"
+      stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/>
+  </svg>`;
 }
 
-async function fetchSheet(key) {
-  const url = `${BASE}&gid=${SHEETS[key]}`;
-  const res = await fetch(url);
-  return parseCSV(await res.text());
+function statusCls(v) {
+  v = (v||'').toLowerCase();
+  return v === 'done' ? 'done' : v === 'ahead' ? 'ahead' : v === 'on track' ? 'on-track' : v === 'behind' ? 'behind' : 'not-started';
+}
+function arcColor(v) {
+  v = (v||'').toLowerCase();
+  return (v==='done'||v==='ahead') ? 'var(--emerald)' : v==='on track' ? 'var(--amber)' : v==='behind' ? 'var(--rose)' : 'var(--slate)';
 }
 
-// ---- Year calculations ----
-const YEAR_START = new Date(2026, 0, 1);
-const YEAR_END = new Date(2026, 11, 31);
-const NOW = new Date();
-const DAYS_ELAPSED = Math.floor((NOW - YEAR_START) / 86400000);
-const DAYS_LEFT = Math.floor((YEAR_END - NOW) / 86400000);
-const WEEKS_ELAPSED = DAYS_ELAPSED / 7;
-const WEEKS_LEFT = DAYS_LEFT / 7;
-const YEAR_PCT = DAYS_ELAPSED / 365;
-
-function statusClass(verdict) {
-  const v = (verdict || '').toLowerCase();
-  if (v === 'done') return 'done';
-  if (v === 'ahead') return 'ahead';
-  if (v === 'on track') return 'on-track';
-  if (v === 'behind') return 'behind';
-  return 'not-started';
-}
-
-function barColor(verdict) {
-  const v = (verdict || '').toLowerCase();
-  if (v === 'done' || v === 'ahead') return 'green';
-  if (v === 'on track') return 'amber';
-  if (v === 'behind') return 'red';
-  return 'muted';
-}
-
-// ---- Build dashboard ----
 async function init() {
-  const [dashRows] = await Promise.all([fetchSheet('dashboard')]);
-
-  // Parse goal rows (row index 9+ in CSV, which is after headers)
-  // Find the header row
-  let headerIdx = -1;
-  for (let i = 0; i < dashRows.length; i++) {
-    if (dashRows[i].includes('Zone') && dashRows[i].includes('Goal')) {
-      headerIdx = i;
-      break;
-    }
-  }
+  const dashRows = await fetchSheet('dashboard');
+  let hi = -1;
+  for (let i = 0; i < dashRows.length; i++) if (dashRows[i].includes('Zone') && dashRows[i].includes('Goal')) { hi = i; break; }
 
   const goals = [];
-  for (let i = headerIdx + 1; i < dashRows.length; i++) {
-    const r = dashRows[i];
-    const zone = r[1];
-    if (!zone) continue;
-    const goal = r[2];
-    const progress = parseFloat(r[3]) || 0;
-    const target = r[4];
-    const pctStr = r[5];
-    const status = r[6];
-    const dueDate = r[7];
-    const paceNeeded = r[8];
-    const currentRate = r[9];
-    const verdict = r[11] || status;
-
-    const targetNum = parseFloat(target);
-    const pct = pctStr ? parseFloat(pctStr) / 100 : 0;
-
-    goals.push({
-      zone, goal, progress, target, targetNum, pct, pctStr,
-      status, dueDate, paceNeeded, currentRate, verdict
-    });
+  for (let i = hi+1; i < dashRows.length; i++) {
+    const r = dashRows[i]; if (!r[1]) continue;
+    const tgt = parseFloat(r[4]), pct = r[5] ? parseFloat(r[5])/100 : 0;
+    goals.push({ zone:r[1], goal:r[2], progress:parseFloat(r[3])||0, target:r[4], targetNum:tgt,
+      pct, pctStr:r[5], status:r[6], dueDate:r[7], paceNeeded:r[8], currentRate:r[9], verdict:r[11]||r[6] });
   }
 
-  // Year bar
-  document.getElementById('year-pct').textContent = Math.round(YEAR_PCT * 100) + '%';
-  document.getElementById('year-fill').style.width = Math.round(YEAR_PCT * 100) + '%';
+  const done = goals.filter(g => g.verdict==='DONE'||g.verdict==='Done').length;
+  const ahead = goals.filter(g => g.verdict==='Ahead').length;
+  const behind = goals.filter(g => g.verdict==='Behind').length;
+  const notStarted = goals.filter(g => g.status==='Not Started'||g.verdict==='-').length;
+  const onTrack = goals.length - done - ahead - behind - notStarted;
+  const totalGoals = goals.length;
 
-  const done = goals.filter(g => g.verdict === 'DONE' || g.verdict === 'Done').length;
-  const ahead = goals.filter(g => g.verdict === 'Ahead').length;
-  const onTrack = goals.filter(g => g.status === 'On Track' && g.verdict !== 'Ahead').length;
-  const behind = goals.filter(g => g.verdict === 'Behind').length;
-  const notStarted = goals.filter(g => g.status === 'Not Started' || g.verdict === '-').length;
+  document.getElementById('last-updated').textContent = 'Live from Sheets \u00b7 ' + new Date().toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
 
-  document.getElementById('year-stats').innerHTML = `
-    <div class="mini-stat blue"><div class="num">${DAYS_ELAPSED}</div><div class="label">Days In</div></div>
-    <div class="mini-stat"><div class="num">${DAYS_LEFT}</div><div class="label">Days Left</div></div>
-    <div class="mini-stat green"><div class="num">${done + ahead}</div><div class="label">On Track</div></div>
-    <div class="mini-stat red"><div class="num">${behind}</div><div class="label">Behind</div></div>
-    <div class="mini-stat"><div class="num">${notStarted}</div><div class="label">Not Started</div></div>
+  // Hero arcs
+  document.getElementById('hero-arcs').innerHTML = `
+    <div class="arc-container large">
+      ${arcSVG(160, 12, YR_PCT, 'var(--accent-light)')}
+      <div class="arc-center">
+        <div class="arc-value" style="color:var(--accent-light)">${Math.round(YR_PCT*100)}%</div>
+        <div class="arc-label">Year</div>
+      </div>
+      <div class="arc-sublabel">${DAYS_IN}d in &middot; ${DAYS_LEFT}d left</div>
+    </div>
+
+    <div class="hero-divider"></div>
+
+    <div class="hero-mini-arcs">
+      <div class="arc-container small">
+        ${arcSVG(90, 7, (done+ahead)/totalGoals, 'var(--emerald)')}
+        <div class="arc-center">
+          <div class="arc-value" style="color:var(--emerald)">${done+ahead}</div>
+        </div>
+        <div class="arc-sublabel">On Track</div>
+      </div>
+
+      <div class="arc-container small">
+        ${arcSVG(90, 7, onTrack/totalGoals, 'var(--amber)')}
+        <div class="arc-center">
+          <div class="arc-value" style="color:var(--amber)">${onTrack}</div>
+        </div>
+        <div class="arc-sublabel">Close</div>
+      </div>
+
+      <div class="arc-container small">
+        ${arcSVG(90, 7, behind/totalGoals, 'var(--rose)')}
+        <div class="arc-center">
+          <div class="arc-value" style="color:var(--rose)">${behind}</div>
+        </div>
+        <div class="arc-sublabel">Behind</div>
+      </div>
+
+      <div class="arc-container small">
+        ${arcSVG(90, 7, notStarted/totalGoals, 'var(--slate)')}
+        <div class="arc-center">
+          <div class="arc-value" style="color:var(--text-muted)">${notStarted}</div>
+        </div>
+        <div class="arc-sublabel">Not Started</div>
+      </div>
+    </div>
   `;
 
-  document.getElementById('last-updated').textContent = new Date().toLocaleDateString('en-AU', {
-    weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-  });
-
-  // Build goal cards
+  // Goal cards
   const grid = document.createElement('div');
   grid.className = 'goals-grid';
 
   for (const g of goals) {
-    const cls = statusClass(g.verdict);
-    const pctDisplay = g.pctStr && g.pctStr !== '—' ? g.pctStr : '—';
-    const isNumeric = !isNaN(g.targetNum) && g.targetNum > 0;
-    const pctVal = Math.min(g.pct * 100, 100);
+    const cls = statusCls(g.verdict);
+    const isNum = !isNaN(g.targetNum) && g.targetNum > 0;
+    const pctVal = Math.min(g.pct, 1);
+    const color = arcColor(g.verdict);
 
-    // Calculate pace insight
     let paceText = '';
-    if (isNumeric && g.progress < g.targetNum) {
-      const remaining = g.targetNum - g.progress;
-      const neededPerWeek = remaining / WEEKS_LEFT;
-      const currentPerWeek = g.progress / (WEEKS_ELAPSED || 1);
-      if (neededPerWeek < 1) {
-        const neededPerMonth = remaining / (DAYS_LEFT / 30.4);
-        paceText = `${neededPerMonth.toFixed(1)}/mo needed`;
-      } else {
-        paceText = `${neededPerWeek.toFixed(1)}/wk needed`;
-      }
+    if (isNum && g.progress < g.targetNum) {
+      const rem = g.targetNum - g.progress;
+      const npw = rem / WK_LEFT;
+      if (npw < 1) paceText = `${(rem/(DAYS_LEFT/30.4)).toFixed(1)}/mo needed`;
+      else paceText = `${npw.toFixed(1)}/wk needed`;
     }
 
     const card = document.createElement('div');
-    card.className = `goal-card ${cls}`;
+    card.className = 'goal-card';
     card.innerHTML = `
-      <div class="card-top">
-        <span class="card-zone">${g.zone}</span>
-        <span class="card-verdict ${cls}">${g.verdict === '-' ? 'Not Started' : g.verdict}</span>
+      <div class="card-arc">
+        ${arcSVG(56, 5, isNum ? pctVal : 0, color)}
+        <div class="arc-center"><div class="arc-value" style="color:${color}">${isNum ? Math.round(pctVal*100)+'%' : '—'}</div></div>
       </div>
-      <div class="card-goal">${g.goal}</div>
-      ${isNumeric ? `
-      <div class="card-progress">
-        <div class="bar-label">
-          <span class="frac">${g.progress} / ${g.target}</span>
-          <span class="pct">${pctDisplay}</span>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-zone">${g.zone}</span>
+          <span class="badge ${cls}">${g.verdict==='-'?'Not Started':g.verdict}</span>
         </div>
-        <div class="card-bar"><div class="card-bar-fill ${barColor(g.verdict)}" style="width:${pctVal}%"></div></div>
-      </div>` : `
-      <div class="card-progress">
-        <div class="bar-label"><span class="frac">${g.status}</span><span class="pct"></span></div>
-      </div>`}
-      <div class="card-stats">
-        ${isNumeric && g.currentRate && g.currentRate !== '-' ? `<div class="card-stat">Current: <strong>${parseFloat(g.currentRate).toFixed(1)}/wk</strong></div>` : ''}
-        ${paceText ? `<div class="card-stat">${paceText}</div>` : ''}
-        <div class="card-stat">Due: <strong>${g.dueDate}</strong></div>
+        <div class="card-goal">${g.goal}</div>
+        <div class="card-meta">
+          ${isNum ? `<span>${g.progress} / ${g.target}</span>` : ''}
+          ${isNum && g.currentRate && g.currentRate!=='-' ? `<span><strong>${parseFloat(g.currentRate).toFixed(1)}</strong>/wk</span>` : ''}
+          ${paceText ? `<span>${paceText}</span>` : ''}
+          <span>Due <strong>${g.dueDate}</strong></span>
+        </div>
       </div>
     `;
     card.addEventListener('click', () => openDetail(g));
     grid.appendChild(card);
   }
 
-  const area = document.getElementById('goals-area');
-  area.innerHTML = '';
-  area.appendChild(grid);
-
-  // Pre-fetch detail sheets in background
+  document.getElementById('goals-area').innerHTML = '';
+  document.getElementById('goals-area').appendChild(grid);
   preloadSheets();
 }
 
-// ---- Detail sheet data cache ----
 const sheetCache = {};
-
 async function preloadSheets() {
-  const keys = Object.keys(SHEETS).filter(k => k !== 'dashboard');
-  for (const k of keys) {
-    fetchSheet(k).then(data => { sheetCache[k] = data; });
-  }
+  for (const k of Object.keys(SHEETS).filter(k=>k!=='dashboard')) fetchSheet(k).then(d => sheetCache[k]=d);
 }
 
-function getSheetKey(zone, goal) {
+function getSheetKey(zone) {
   const z = zone.toLowerCase();
-  const g = goal.toLowerCase();
-  if (z === 'parkrun') return 'parkrun';
-  if (z === 'fitness' || z === 'sailing' || z === 'strong') return 'fitness';
-  if (z === 'music') return 'music';
-  if (z === 'movies') return 'movies';
-  if (z === 'listening') return 'listening';
-  if (z === 'blood') return 'blood';
-  if (z === 'writing' || z === 'poetry') return 'creative';
-  if (z === 'sleep' || z === 'steps') return 'health';
-  if (z === 'volunteering') return 'volunteering';
-  if (z === 'one-offs' || z === 'life admin') return 'lifeadmin';
-  if (z === 'getaways') return 'getaways';
+  if (z==='parkrun') return 'parkrun';
+  if (z==='fitness'||z==='sailing'||z==='strong') return 'fitness';
+  if (z==='music') return 'music';
+  if (z==='movies') return 'movies';
+  if (z==='listening') return 'listening';
+  if (z==='blood') return 'blood';
+  if (z==='writing'||z==='poetry') return 'creative';
+  if (z==='sleep'||z==='steps') return 'health';
+  if (z==='volunteering') return 'volunteering';
+  if (z==='one-offs'||z==='life admin') return 'lifeadmin';
+  if (z==='getaways') return 'getaways';
   return null;
 }
 
-function findSection(rows, keyword) {
-  // Find a section in the sheet that contains the keyword
-  for (let i = 0; i < rows.length; i++) {
-    const joined = rows[i].join(' ').toLowerCase();
-    if (joined.includes(keyword.toLowerCase())) {
-      return i;
-    }
-  }
+function findSection(rows, kw) {
+  for (let i = 0; i < rows.length; i++) if (rows[i].join(' ').toLowerCase().includes(kw.toLowerCase())) return i;
   return -1;
 }
-
-function extractTable(rows, startSearch) {
-  // Find the header row (contains "Done" and at least one other header)
-  let headerIdx = -1;
-  for (let i = startSearch; i < rows.length; i++) {
-    if (rows[i].some(c => c === 'Done') && rows[i].filter(c => c).length >= 3) {
-      headerIdx = i;
-      break;
-    }
-  }
-  if (headerIdx === -1) return { headers: [], entries: [] };
-
-  const headers = rows[headerIdx].filter((_, idx) => idx > 0); // skip col A
+function extractTable(rows, from) {
+  let hi = -1;
+  for (let i = from; i < rows.length; i++) if (rows[i].some(c=>c==='Done') && rows[i].filter(c=>c).length >= 3) { hi = i; break; }
+  if (hi===-1) return {headers:[],entries:[]};
+  const headers = rows[hi].filter((_,i)=>i>0);
   const entries = [];
-  for (let i = headerIdx + 1; i < rows.length; i++) {
-    const r = rows[i].slice(1); // skip col A
-    if (!r.some(c => c)) break; // empty row = end of section
-    // Only include if there's a TRUE/FALSE in first col or has data
-    if (r[0] === 'TRUE' || r[0] === 'FALSE' || r.some(c => c && c !== 'FALSE')) {
-      entries.push(r);
-    }
+  for (let i = hi+1; i < rows.length; i++) {
+    const r = rows[i].slice(1);
+    if (!r.some(c=>c)) break;
+    if (r[0]==='TRUE'||r[0]==='FALSE'||r.some(c=>c&&c!=='FALSE')) entries.push(r);
   }
-  return { headers, entries };
+  return {headers,entries};
 }
 
 async function openDetail(goal) {
   const overlay = document.getElementById('detail-overlay');
   const content = document.getElementById('detail-content');
+  const sk = getSheetKey(goal.zone);
+  let rows = sheetCache[sk];
+  if (!rows && sk) { rows = await fetchSheet(sk); sheetCache[sk] = rows; }
 
-  const sheetKey = getSheetKey(goal.zone, goal.goal);
-  let rows = sheetCache[sheetKey];
-  if (!rows && sheetKey) {
-    rows = await fetchSheet(sheetKey);
-    sheetCache[sheetKey] = rows;
-  }
+  const isNum = !isNaN(goal.targetNum) && goal.targetNum > 0;
+  const pctVal = Math.min(goal.pct, 1);
+  const cls = statusCls(goal.verdict);
+  const rem = isNum ? goal.targetNum - goal.progress : 0;
+  const color = arcColor(goal.verdict);
 
-  const isNumeric = !isNaN(goal.targetNum) && goal.targetNum > 0;
-  const pctVal = Math.min(goal.pct * 100, 100);
-  const cls = statusClass(goal.verdict);
-  const remaining = isNumeric ? goal.targetNum - goal.progress : 0;
-
-  // Pace calculations
-  let paceInsight = '';
-  if (isNumeric && goal.progress < goal.targetNum) {
-    const currentPerWeek = goal.progress / (WEEKS_ELAPSED || 1);
-    const neededPerWeek = remaining / WEEKS_LEFT;
-    const currentPerMonth = goal.progress / (DAYS_ELAPSED / 30.4);
-    const neededPerMonth = remaining / (DAYS_LEFT / 30.4);
-
+  let pace = '';
+  if (isNum && goal.progress < goal.targetNum) {
+    const cpw = goal.progress / (WK_IN||1), npw = rem / WK_LEFT;
     if (goal.progress === 0) {
-      paceInsight = `You haven't started yet. To hit <strong>${goal.target}</strong> by <strong>${goal.dueDate}</strong>, you need <strong>${neededPerWeek < 1 ? neededPerMonth.toFixed(1) + ' per month' : neededPerWeek.toFixed(1) + ' per week'}</strong>. That's ${Math.ceil(remaining)} to go in ${Math.round(DAYS_LEFT / 7)} weeks.`;
+      pace = `You haven't started yet. To hit <strong>${goal.target}</strong> by <strong>${goal.dueDate}</strong>, you need <strong>${npw<1?(rem/(DAYS_LEFT/30.4)).toFixed(1)+' per month':npw.toFixed(1)+' per week'}</strong>. That's ${Math.ceil(rem)} to go in ${Math.round(WK_LEFT)} weeks.`;
+    } else if (cpw >= npw) {
+      pace = `You're doing <strong>${cpw.toFixed(1)}/week</strong> and only need <strong>${npw.toFixed(1)}/week</strong>. At this pace you'll finish with <strong>${Math.round((rem/cpw)*7)} days</strong> to spare.`;
     } else {
-      const ratio = currentPerWeek / neededPerWeek;
-      if (ratio >= 1) {
-        paceInsight = `You're doing <strong>${currentPerWeek.toFixed(1)}/week</strong> and only need <strong>${neededPerWeek.toFixed(1)}/week</strong> to finish on time. At this pace you'll be done with <strong>${Math.round((remaining / currentPerWeek) * 7)} days</strong> to spare.`;
-      } else {
-        const deficit = neededPerWeek - currentPerWeek;
-        paceInsight = `You're averaging <strong>${currentPerWeek.toFixed(1)}/week</strong> but need <strong>${neededPerWeek.toFixed(1)}/week</strong> to hit your target. You need to increase by <strong>${deficit.toFixed(1)} more per week</strong> to get there.`;
-      }
+      pace = `You're averaging <strong>${cpw.toFixed(1)}/week</strong> but need <strong>${npw.toFixed(1)}/week</strong>. Pick up by <strong>${(npw-cpw).toFixed(1)} more per week</strong> to get there.`;
     }
-  } else if (isNumeric && goal.progress >= goal.targetNum) {
-    paceInsight = `You've hit your target. ${goal.progress} / ${goal.target} complete.`;
+  } else if (isNum && goal.progress >= goal.targetNum) {
+    pace = `Target reached! <strong>${goal.progress} / ${goal.target}</strong> complete.`;
   }
 
-  // Stats cards
-  let statsHtml = '<div class="detail-stats">';
-  if (isNumeric) {
-    statsHtml += `
-      <div class="detail-stat-card"><div class="val blue">${goal.progress}</div><div class="lbl">Done</div></div>
-      <div class="detail-stat-card"><div class="val">${remaining}</div><div class="lbl">Remaining</div></div>
-      <div class="detail-stat-card"><div class="val ${cls === 'behind' ? 'red' : cls === 'ahead' || cls === 'done' ? 'green' : 'amber'}">${Math.round(pctVal)}%</div><div class="lbl">Complete</div></div>
-      <div class="detail-stat-card"><div class="val">${Math.round(YEAR_PCT * 100)}%</div><div class="lbl">Year Elapsed</div></div>
-    `;
-    if (goal.currentRate && goal.currentRate !== '-') {
-      statsHtml += `<div class="detail-stat-card"><div class="val">${parseFloat(goal.currentRate).toFixed(1)}</div><div class="lbl">Per Week</div></div>`;
-    }
-    if (remaining > 0) {
-      const nw = remaining / WEEKS_LEFT;
-      statsHtml += `<div class="detail-stat-card"><div class="val amber">${nw.toFixed(1)}</div><div class="lbl">Need/Week</div></div>`;
-    }
+  let stats = '';
+  if (isNum) {
+    const clr = cls==='behind'?'rose':(cls==='ahead'||cls==='done')?'emerald':'amber';
+    stats = `<div class="detail-stats">
+      <div class="d-stat"><div class="val sky">${goal.progress}</div><div class="lbl">Done</div></div>
+      <div class="d-stat"><div class="val">${rem}</div><div class="lbl">Remaining</div></div>
+      <div class="d-stat"><div class="val ${clr}">${Math.round(pctVal*100)}%</div><div class="lbl">Complete</div></div>
+      <div class="d-stat"><div class="val">${Math.round(YR_PCT*100)}%</div><div class="lbl">Year</div></div>
+      ${goal.currentRate&&goal.currentRate!=='-'?`<div class="d-stat"><div class="val">${parseFloat(goal.currentRate).toFixed(1)}</div><div class="lbl">Per Week</div></div>`:''}
+      ${rem>0?`<div class="d-stat"><div class="val amber">${(rem/WK_LEFT).toFixed(1)}</div><div class="lbl">Need/Wk</div></div>`:''}
+    </div>`;
   }
-  statsHtml += '</div>';
 
-  // Progress bar
-  let progressHtml = '';
-  if (isNumeric) {
-    progressHtml = `
-      <div class="detail-progress">
-        <div class="labels">
-          <strong>${goal.progress} / ${goal.target}</strong>
-          <span>${Math.round(pctVal)}% complete</span>
-        </div>
-        <div class="progress-rail">
-          <div class="progress-fill" style="width:${pctVal}%;background:${pctVal >= YEAR_PCT * 100 ? 'var(--green)' : 'var(--red)'}"></div>
-        </div>
+  let progHtml = '';
+  if (isNum) {
+    const yearMarker = Math.round(YR_PCT*100);
+    progHtml = `<div class="detail-progress">
+      <div class="labels"><strong>${goal.progress} / ${goal.target}</strong><span>${Math.round(pctVal*100)}% complete</span></div>
+      <div class="progress-rail">
+        <div class="progress-fill" style="width:${pctVal*100}%;background:${color}"></div>
+        <div class="marker" style="left:${yearMarker}%" title="Year progress: ${yearMarker}%"></div>
       </div>
-    `;
+    </div>`;
   }
 
-  // Extract table from sheet
+  // Table from sheet
   let tableHtml = '';
   if (rows) {
-    // Try to find the right section based on goal name
-    const searchTerms = {
-      'parkrun': ['30 parkruns', '5 volunteer'].includes(goal.goal.substring(0,12)) ? (goal.goal.includes('volunteer') ? 'VOLUNTEER' : 'PARKRUN TRACKER') : 'PARKRUN',
-      'fitness': goal.zone.toLowerCase() === 'sailing' ? 'SAILING' : goal.zone.toLowerCase() === 'strong' ? 'STRENGTH' : goal.goal.includes('trail') ? 'TRAIL' : goal.goal.includes('Tai') ? 'TAI CHI' : 'CITY TO BAY',
-      'music': goal.goal.includes('artist') ? 'NEW ARTISTS' : 'NEW ALBUMS',
-      'creative': goal.goal.includes('poetry') ? 'POETRY' : 'WRITING',
-    };
-
-    let startFrom = 0;
-    const key = sheetKey;
-    if (searchTerms[key]) {
-      const term = typeof searchTerms[key] === 'string' ? searchTerms[key] : searchTerms[key];
-      const idx = findSection(rows, term);
-      if (idx >= 0) startFrom = idx;
-    }
-
-    const { headers, entries } = extractTable(rows, startFrom);
-    if (entries.length > 0) {
-      const hasData = entries.some(e => e.some((c, i) => i > 0 && c && c !== 'FALSE'));
-      if (hasData) {
-        tableHtml = '<table class="detail-table"><thead><tr>';
-        for (const h of headers) {
-          if (h) tableHtml += `<th>${h}</th>`;
-        }
-        tableHtml += '</tr></thead><tbody>';
-        for (const e of entries) {
-          const isDone = e[0] === 'TRUE';
-          tableHtml += `<tr class="${isDone ? 'done-row' : ''}">`;
-          for (let i = 0; i < headers.length; i++) {
-            if (!headers[i]) continue;
-            if (i === 0) {
-              tableHtml += `<td>${isDone ? '<span class="check">&#10003;</span>' : '<span class="uncheck">&#9675;</span>'}</td>`;
-            } else {
-              tableHtml += `<td>${e[i] || ''}</td>`;
-            }
-          }
-          tableHtml += '</tr>';
-        }
-        tableHtml += '</tbody></table>';
+    const terms = { parkrun: goal.goal.includes('volunteer')?'VOLUNTEER':'PARKRUN TRACKER',
+      fitness: goal.zone.toLowerCase()==='sailing'?'SAILING':goal.zone.toLowerCase()==='strong'?'STRENGTH':goal.goal.includes('trail')?'TRAIL':goal.goal.includes('Tai')?'TAI CHI':'CITY TO BAY',
+      music: goal.goal.includes('artist')?'NEW ARTISTS':'NEW ALBUMS',
+      creative: goal.goal.includes('poetry')?'POETRY':'WRITING' };
+    let from = 0;
+    if (terms[sk]) { const idx = findSection(rows, terms[sk]); if (idx>=0) from = idx; }
+    const {headers, entries} = extractTable(rows, from);
+    if (entries.length && entries.some(e=>e.some((c,i)=>i>0&&c&&c!=='FALSE'))) {
+      tableHtml = '<table class="detail-table"><thead><tr>';
+      for (const h of headers) if (h) tableHtml += `<th>${h}</th>`;
+      tableHtml += '</tr></thead><tbody>';
+      for (const e of entries) {
+        const d = e[0]==='TRUE';
+        tableHtml += `<tr class="${d?'done-row':''}">`;
+        for (let i=0;i<headers.length;i++) { if (!headers[i]) continue;
+          tableHtml += i===0 ? `<td>${d?'<span class="check">\u2713</span>':'<span class="uncheck">\u25CB</span>'}</td>` : `<td>${e[i]||''}</td>`; }
+        tableHtml += '</tr>';
       }
+      tableHtml += '</tbody></table>';
     }
   }
 
   content.innerHTML = `
-    <div class="detail-header">
-      <h2>${goal.goal}</h2>
-      <p>${goal.zone} &middot; Due ${goal.dueDate}</p>
+    <div class="detail-hero">
+      <div class="card-arc">${arcSVG(80, 7, isNum?pctVal:0, color)}<div class="arc-center" style="top:8px"><div class="arc-value" style="color:${color};font-size:1.3rem">${isNum?Math.round(pctVal*100)+'%':'—'}</div></div></div>
+      <div class="detail-hero-info"><h2>${goal.goal}</h2><p>${goal.zone} \u00b7 Due ${goal.dueDate}</p></div>
     </div>
-    ${statsHtml}
-    ${progressHtml}
-    ${paceInsight ? `<div class="pace-insight">${paceInsight}</div>` : ''}
-    ${tableHtml}
-  `;
-
+    ${stats}${progHtml}${pace?`<div class="pace-insight">${pace}</div>`:''}${tableHtml}`;
   overlay.classList.add('open');
 }
 
-// Close detail
-document.getElementById('detail-close').addEventListener('click', () => {
-  document.getElementById('detail-overlay').classList.remove('open');
-});
-document.getElementById('detail-overlay').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) {
-    e.currentTarget.classList.remove('open');
-  }
-});
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') document.getElementById('detail-overlay').classList.remove('open');
-});
+document.getElementById('detail-close').addEventListener('click', () => document.getElementById('detail-overlay').classList.remove('open'));
+document.getElementById('detail-overlay').addEventListener('click', e => { if (e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+document.addEventListener('keydown', e => { if (e.key==='Escape') document.getElementById('detail-overlay').classList.remove('open'); });
 
 init();
 </script>
