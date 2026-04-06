@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "2026 Goals Dashboard",
+  "version": "1.0",
+  "description": "Shows your goals dashboard on every new tab",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "icons": {
+    "128": "icon.png"
+  }
+}

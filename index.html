@@ -95,7 +95,36 @@
     font-size: 0.8rem;
     color: var(--text-muted);
     margin-top: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
+  .refresh-btn {
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .refresh-btn:hover { background: var(--border); color: var(--text); }
+  .refresh-btn.spinning .refresh-icon { animation: spin 0.7s linear infinite; }
+  .refresh-icon { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .cache-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .cache-dot.fresh { background: var(--emerald); }
+  .cache-dot.stale { background: var(--amber); }
 
   .hero-arcs {
     display: flex;
@@ -454,7 +483,12 @@
     <div class="hero-top">
       <div>
         <h1><span>2026</span> Goals</h1>
-        <div class="updated" id="last-updated"></div>
+        <div class="updated" id="last-updated">
+          <span id="cache-status"></span>
+          <button class="refresh-btn" id="refresh-btn" title="Refresh from Google Sheets">
+            <span class="refresh-icon">&#8635;</span> Refresh
+          </button>
+        </div>
       </div>
     </div>
     <div class="hero-arcs" id="hero-arcs">
@@ -501,7 +535,48 @@ function parseLine(line) {
   }
   r.push(c.trim()); return r;
 }
-async function fetchSheet(key) { const r = await fetch(`${BASE}&gid=${SHEETS[key]}`); return parseCSV(await r.text()); }
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
+function getCached(key) {
+  try {
+    const raw = localStorage.getItem('goals_' + key);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) return null;
+    return data;
+  } catch { return null; }
+}
+
+function setCache(key, data) {
+  try { localStorage.setItem('goals_' + key, JSON.stringify({ data, ts: Date.now() })); } catch {}
+}
+
+function getCacheAge() {
+  try {
+    const raw = localStorage.getItem('goals_dashboard');
+    if (!raw) return null;
+    return Date.now() - JSON.parse(raw).ts;
+  } catch { return null; }
+}
+
+async function fetchSheetFresh(key) {
+  const r = await fetch(`${BASE}&gid=${SHEETS[key]}`);
+  const data = parseCSV(await r.text());
+  setCache(key, data);
+  return data;
+}
+
+async function fetchSheet(key, forceRefresh) {
+  if (!forceRefresh) {
+    const cached = getCached(key);
+    if (cached) return cached;
+  }
+  return fetchSheetFresh(key);
+}
+
+function clearAllCache() {
+  Object.keys(SHEETS).forEach(k => localStorage.removeItem('goals_' + k));
+}
 
 const Y0 = new Date(2026,0,1), Y1 = new Date(2026,11,31), NOW = new Date();
 const DAYS_IN = Math.floor((NOW-Y0)/864e5), DAYS_LEFT = Math.floor((Y1-NOW)/864e5);
@@ -539,8 +614,21 @@ function arcColors(v) {
 }
 function arcColor(v) { return arcColors(v)[0]; }
 
-async function init() {
-  const dashRows = await fetchSheet('dashboard');
+function updateCacheStatus() {
+  const age = getCacheAge();
+  const el = document.getElementById('cache-status');
+  if (!age) {
+    el.innerHTML = '<span class="cache-dot fresh"></span> Live from Sheets';
+  } else {
+    const mins = Math.floor(age / 60000);
+    const label = mins < 1 ? 'just now' : mins < 60 ? `${mins}m ago` : `${Math.floor(mins/60)}h ${mins%60}m ago`;
+    const fresh = age < CACHE_TTL;
+    el.innerHTML = `<span class="cache-dot ${fresh ? 'fresh' : 'stale'}"></span> ${fresh ? 'Cached' : 'Stale'} \u00b7 updated ${label}`;
+  }
+}
+
+async function init(forceRefresh) {
+  const dashRows = await fetchSheet('dashboard', forceRefresh);
   let hi = -1;
   for (let i = 0; i < dashRows.length; i++) if (dashRows[i].includes('Zone') && dashRows[i].includes('Goal')) { hi = i; break; }
 
@@ -568,7 +656,7 @@ async function init() {
   const notStarted = goals.filter(g => g.status==='Not Started'||g.verdict==='-').length;
   const totalGoals = goals.length;
 
-  document.getElementById('last-updated').textContent = 'Live from Sheets \u00b7 ' + new Date().toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  updateCacheStatus();
 
   // Hero arcs
   document.getElementById('hero-arcs').innerHTML = `
@@ -666,12 +754,12 @@ async function init() {
 
   document.getElementById('goals-area').innerHTML = '';
   document.getElementById('goals-area').appendChild(grid);
-  preloadSheets();
+  preloadSheets(forceRefresh);
 }
 
 const sheetCache = {};
-async function preloadSheets() {
-  for (const k of Object.keys(SHEETS).filter(k=>k!=='dashboard')) fetchSheet(k).then(d => sheetCache[k]=d);
+async function preloadSheets(forceRefresh) {
+  for (const k of Object.keys(SHEETS).filter(k=>k!=='dashboard')) fetchSheet(k, forceRefresh).then(d => sheetCache[k]=d);
 }
 
 function getSheetKey(zone) {
@@ -713,7 +801,7 @@ async function openDetail(goal) {
   const content = document.getElementById('detail-content');
   const sk = getSheetKey(goal.zone);
   let rows = sheetCache[sk];
-  if (!rows && sk) { rows = await fetchSheet(sk); sheetCache[sk] = rows; }
+  if (!rows && sk) { rows = await fetchSheet(sk, false); sheetCache[sk] = rows; }
 
   const isNum = !isNaN(goal.targetNum) && goal.targetNum > 0;
   const pctVal = Math.min(goal.pct, 1);
@@ -801,7 +889,19 @@ document.getElementById('detail-close').addEventListener('click', () => document
 document.getElementById('detail-overlay').addEventListener('click', e => { if (e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
 document.addEventListener('keydown', e => { if (e.key==='Escape') document.getElementById('detail-overlay').classList.remove('open'); });
 
-init();
+document.getElementById('refresh-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('refresh-btn');
+  btn.classList.add('spinning');
+  btn.disabled = true;
+  clearAllCache();
+  // Clear detail sheet cache too
+  Object.keys(sheetCache).forEach(k => delete sheetCache[k]);
+  await init(true);
+  btn.classList.remove('spinning');
+  btn.disabled = false;
+});
+
+init(false);
 </script>
 </body>
 </html>
