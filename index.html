@@ -647,11 +647,15 @@ async function init(forceRefresh) {
     }
     // Classify goal type for proper display
     const targetRaw = r[4];
+    const goalLower = (r[2]||'').toLowerCase();
+    const zoneLower = (r[1]||'').toLowerCase();
     let goalType = 'count'; // default: count up to N
     if (targetRaw === '—' || targetRaw === '-' || !targetRaw) goalType = 'open';
     else if (targetRaw.includes('%')) goalType = 'percent';
     else if (tgt === 1) goalType = 'binary';
     else if (tgt <= 0 || isNaN(tgt)) goalType = 'open';
+    // One-offs and checklist-style goals: show as checklist, not pace
+    if (zoneLower === 'one-offs' || goalLower.includes('first aid')) goalType = 'checklist';
 
     goals.push({ zone:r[1], goal:r[2], progress:parseFloat(r[3])||0, target:targetRaw, targetNum:tgt,
       pct, pctStr:r[5], status:rawStatus, dueDate:r[7], paceNeeded:r[8], currentRate:r[9], verdict, goalType });
@@ -742,6 +746,9 @@ async function init(forceRefresh) {
     } else if (g.goalType === 'binary') {
       arcPct = g.progress >= 1 ? 1 : 0;
       fracText = g.progress >= 1 ? 'Done' : 'Not yet';
+    } else if (g.goalType === 'checklist') {
+      arcPct = g.targetNum > 0 ? g.progress / g.targetNum : 0;
+      fracText = `${g.progress} / ${g.targetNum} done`;
     } else {
       // open-ended
       arcPct = 0;
@@ -848,6 +855,8 @@ async function openDetail(goal) {
     pace = goal.progress >= 1 ? 'Done!' : `One-time goal. Due <strong>${goal.dueDate}</strong>.`;
   } else if (goal.goalType === 'percent') {
     pace = `This is a daily habit \u2014 track it in the spreadsheet and your percentage will update here.`;
+  } else if (goal.goalType === 'checklist') {
+    pace = goal.progress > 0 ? `<strong>${goal.progress} / ${goal.targetNum}</strong> items ticked off. Keep chipping away!` : 'Checklist goal \u2014 tick items off in the spreadsheet as you complete them.';
   } else if (goal.goalType === 'open') {
     pace = goal.progress > 0 ? `You've logged <strong>${goal.progress}</strong> so far. Keep going!` : 'Open-ended goal \u2014 start logging in the spreadsheet.';
   }
@@ -871,6 +880,13 @@ async function openDetail(goal) {
       <div class="d-stat"><div class="val sky">${goal.pctStr || '0%'}</div><div class="lbl">Current</div></div>
       <div class="d-stat"><div class="val">${goal.target}</div><div class="lbl">Target</div></div>
       <div class="d-stat"><div class="val">${Math.round(YR_PCT*100)}%</div><div class="lbl">Year</div></div>
+    </div>`;
+  } else if (goal.goalType === 'checklist') {
+    detailArcPct = goal.targetNum > 0 ? goal.progress / goal.targetNum : 0;
+    stats = `<div class="detail-stats">
+      <div class="d-stat"><div class="val sky">${goal.progress}</div><div class="lbl">Done</div></div>
+      <div class="d-stat"><div class="val">${goal.targetNum - goal.progress}</div><div class="lbl">Remaining</div></div>
+      <div class="d-stat"><div class="val">${Math.round(detailArcPct*100)}%</div><div class="lbl">Complete</div></div>
     </div>`;
   } else if (goal.goalType === 'binary') {
     detailArcPct = goal.progress >= 1 ? 1 : 0;
